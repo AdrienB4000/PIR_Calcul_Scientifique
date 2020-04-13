@@ -9,7 +9,6 @@ V : (vaccinated) population vaccinee
 Avec u = [M,S,E,I,R,V], le modèle donne l'equation : du/dt = f(u)
 avec f qui varie selon la complexite du modele. """
 
-
 ## Fonctions f du modele
 function f_SIR(u,parametres)
     """Calcule f(u) selon le modele SIR sans dynamique demographique."""
@@ -260,7 +259,7 @@ function Euler_explicite(u0,f,parametres)
     """Resout le modele SIR avec la methode d'Euler explicite (ou Runge-Kutta d'ordre 1)."""
     U = [u0]
     u = u0
-    for t in temps[:-1]
+    for t in temps[1:length(temps)-1]
         u = u + pas*f(u,parametres)
         U.append(u)
     end
@@ -275,7 +274,7 @@ function Newton(x0,h)
     e = 1e-7
     for i in range(nb_max)
         dh = [(h([x[j]+e*(j==i) for j in 1:len(x)])-h(x))/e for i in 1:len(x)]
-        norm_dh2 = norm(dh)**2
+        norm_dh2 = norm(dh)^2
         if norm_dh2 < eps
             print("Probleme : impossible de resoudre le modele avec la methode d'Euler implicite : division par 0 lors de la methode de Newton !\n")
             break
@@ -294,18 +293,18 @@ function Euler_implicite(u0,f,parametres)
     """Resout le modele SIR avec la methode d'Euler implicite."""
     U = [u0]
     u = u0
-    for t in temps[:-1]
+    for t in temps[1:length(temps)-1]
         u = Newton(u, x -> norm(u-x+pas*f(u,parametres)))
         U.append(u)
     end
     return U
 end
 
-def Heun(u0,f,parametres)
+function Heun(u0,f,parametres)
     """Resout le modele SIR avec la methode de Heun."""
     U = [u0]
     u = u0
-    for t in temps[:-1]
+    for t in temps[1:length(temps)-1]
         u = u + pas/2*(f(u,parametres)+f(u+pas*f(u,parametres),parametres))
         U.append(u)
     end
@@ -314,26 +313,32 @@ end
 
 function Runge_Kutta_2(u0,f,parametres)
     """Resout le modele SIR avec la methode de Runge-Kutta d'ordre 2."""
-    U = [u0]
+    U=zeros(Float64, nb_pts+1, length(u0))
+    U[1,:]=u0
     u = u0
-    for t in temps[:-1]
+    i=1
+    for t in temps[1:length(temps)-1]
+        i+=1
         u = u + pas*f(u+pas/2*f(u,parametres),parametres)
-        U.append(u)
+        U[i,:]=u
     end
     return U
 end
 
 function Runge_Kutta_4(u0,f,parametres)
     """Resout le modele SIR avec la methode de Runge-Kutta d'ordre 4."""
-    U = [u0]
+    U=zeros(Float64, nb_pts+1, length(u0))
+    U[1,:]=u0
     u = u0
-    for t in temps[:-1]
+    i=1
+    for t in temps[1:length(temps)-1]
+        i+=1
         k1 = f(u,parametres)
         k2 = f(u+pas/2*k1,parametres)
         k3 = f(u+pas/2*k2,parametres)
         k4 = f(u+pas*k3,parametres)
         u = u + pas/6*(k1+2*k2+2*k3+k4)
-        U.append(u)
+        U[i,:]=u
     end
     return U
 end
@@ -342,7 +347,7 @@ methodes = [Euler_explicite,Euler_implicite,Heun,Runge_Kutta_2,Runge_Kutta_4]
 noms_methodes = ["Euler_explicite","Euler_implicite","Heun","Runge_Kutta_2","Runge_Kutta_4"]
 
 ## Trace
-function trace(U,modele=None,methode=None,cree=True)
+function trace(U,modele=nothing,methode=nothing,cree=true)
     """Trace les solutions obtenues u en ouvrant une nouvelle fenetre si cree=True."""
     M = U[:,1]
     S = U[:,2]
@@ -352,17 +357,16 @@ function trace(U,modele=None,methode=None,cree=True)
     V = U[:,6]
     titre = "Evolution de l'epidemie au cours du temps"
     if cree
-        figure()
         plot(temps,M,':',color="yellow",label="M")
         plot(temps,S,':',color="blue",label="S")
         plot(temps,E,':',color="orange",label="E")
         plot(temps,I,':',color="red",label="I")
         plot(temps,R,':',color="green",label="R")
         plot(temps,V,':',color="magenta",label="V")
-        if modele != None
+        if modele != nothing
             titre += " modele " + noms_modeles[modeles.index(modele)]
         end
-        if methode != None
+        if methode != nothing
             titre += " (methode " + noms_methodes[methodes.index(methode)] + ")"
         end
         legend()
@@ -385,7 +389,7 @@ end
 function solution(modele,u0,cree)
     """Trace la solution exacte du modele selon la fonction f du modele choisie en ouvrant une nouvelle fenetre si cree=True."""
     U=[u0]
-    for t in temps[:-1]
+    for t in temps[1:length(temps)-1]
         #A completer
         U.append(u0)
     end
@@ -397,7 +401,7 @@ function resolution(methode,modele,parametres,u0,cree)
     """Resout numeriquement le modele a partir de u0 selon la fonction f du modele et avec la methode de
     resolution choisies et trace la solution en ouvrant une nouvelle fenetre si cree=True."""
     U = methode(u0,modele,parametres)
-    trace(U,modele,None,cree)
+    trace(U,modele,nothing,cree)
     return U
 end
 
@@ -408,7 +412,7 @@ end
 duree = 80 # Duree (jour)
 nb_pts = 10000
 pas = duree/nb_pts
-temps = range(0,duree,nb_pts)
+temps = collect(0:pas:duree)
 
 # Parametres de modelistaion
 N = 100000 # Population totale
@@ -428,10 +432,10 @@ parametres = [N,beta,gamma,Lambda,mu,delta,epsilon,sigma,rho]
 I0 = 10
 proportion_M0_dans_N = 0.1
 M0 = 0*proportion_M0_dans_N*N
-u0 = [M0,N-I0-M0,0,I0,0] # [M,S,E,I,R]
+u0 = [M0,N-I0-M0,0,I0,0,0] # [M,S,E,I,R,V]
 methode = Runge_Kutta_4 # Methode de resolution
 modele = f_SEIS # Modele d'epidemie
-cree = True # Affiche le resultat sur une nouvelle fenetre
+cree = true # Affiche le resultat sur une nouvelle fenetre
 
 
 ## Affichage
