@@ -4,8 +4,9 @@ I : (infected) population infectee
 R : (recovered) population guerie
 M : (maternal) nouveaux-nes immunise maternellement pour une duree provisoire
 E : (exposed) population exposee
+V : (vaccinated) population vaccinee
 
-Avec u = [M,S,E,I,R], le modèle donne l'equation : du/dt = f(u)
+Avec u = [M,S,E,I,R,V], le modèle donne l'equation : du/dt = f(u)
 avec f qui varie selon la complexite du modele. """
 
 
@@ -18,6 +19,7 @@ function f_SIR(u,parametres)
     E = u[3]
     I = u[4]
     R = u[5]
+    V = u[6]
     N = parametres[1]
     beta = parametres[2]
     gamma = parametres[3]
@@ -32,7 +34,8 @@ function f_SIR(u,parametres)
     dE_dt = 0
     dI_dt = beta*I*S/N - gamma*I
     dR_dt = gamma*I
-    return [dM_dt,dS_dt,dE_dt,dI_dt,dR_dt]
+    dV_dt = 0
+    return [dM_dt,dS_dt,dE_dt,dI_dt,dR_dt,dV_dt]
 end
 
 function f_SIR_dyn(u,parametres)
@@ -43,6 +46,7 @@ function f_SIR_dyn(u,parametres)
     E = u[3]
     I = u[4]
     R = u[5]
+    V = u[6]
     N = parametres[1]
     beta = parametres[2]
     gamma = parametres[3]
@@ -57,7 +61,8 @@ function f_SIR_dyn(u,parametres)
     dE_dt = 0
     dI_dt = beta*I*S/N - gamma*I - mu*I
     dR_dt = gamma*I - mu*R
-    return [dM_dt,dS_dt,dE_dt,dI_dt,dR_dt]
+    dV_dt = 0
+    return [dM_dt,dS_dt,dE_dt,dI_dt,dR_dt,dV_dt]
 end
 
 function f_SIS(u,parametres)
@@ -68,6 +73,7 @@ function f_SIS(u,parametres)
     E = u[3]
     I = u[4]
     R = u[5]
+    V = u[6]
     N = parametres[1]
     beta = parametres[2]
     gamma = parametres[3]
@@ -82,7 +88,8 @@ function f_SIS(u,parametres)
     dE_dt = 0
     dI_dt = beta*I*S/N - gamma*I
     dR_dt = 0
-    return [dM_dt,dS_dt,dE_dt,dI_dt,dR_dt]
+    dV_dt = 0
+    return [dM_dt,dS_dt,dE_dt,dI_dt,dR_dt,dV_dt]
 end
 
 function f_MSIR(u,parametres)
@@ -92,6 +99,7 @@ function f_MSIR(u,parametres)
     E = u[3]
     I = u[4]
     R = u[5]
+    V = u[6]
     N = parametres[1]
     beta = parametres[2]
     gamma = parametres[3]
@@ -106,7 +114,8 @@ function f_MSIR(u,parametres)
     dE_dt = 0
     dI_dt = beta*I*S/N - (gamma+mu)*I
     dR_dt = gamma*I - mu*R
-    return [dM_dt,dS_dt,dE_dt,dI_dt,dR_dt]
+    dV_dt = 0
+    return [dM_dt,dS_dt,dE_dt,dI_dt,dR_dt,dV_dt]
 end
 
 function f_SEIR(u,parametres)
@@ -117,6 +126,7 @@ function f_SEIR(u,parametres)
     E = u[3]
     I = u[4]
     R = u[5]
+    V = u[6]
     N = parametres[1]
     beta = parametres[2]
     gamma = parametres[3]
@@ -131,7 +141,8 @@ function f_SEIR(u,parametres)
     dE_dt = beta*I*S/N-(mu+epsilon)*E
     dI_dt = epsilon*E - (gamma+mu)*I
     dR_dt = gamma*I - mu*R
-    return [dM_dt,dS_dt,dE_dt,dI_dt,dR_dt]
+    dV_dt = 0
+    return [dM_dt,dS_dt,dE_dt,dI_dt,dR_dt,dV_dt]
 end
 
 function f_SEIS(u,parametres)
@@ -141,6 +152,7 @@ function f_SEIS(u,parametres)
     E = u[3]
     I = u[4]
     R = u[5]
+    V = u[6]
     N = parametres[1]
     beta = parametres[2]
     gamma = parametres[3]
@@ -155,7 +167,8 @@ function f_SEIS(u,parametres)
     dE_dt = beta*I*S/N-(mu+epsilon)*E
     dI_dt = epsilon*E - (gamma+mu)*I
     dR_dt = 0
-    return [dM_dt,dS_dt,dE_dt,dI_dt,dR_dt]
+    dV_dt = 0
+    return [dM_dt,dS_dt,dE_dt,dI_dt,dR_dt,dV_dt]
 end
 
 function f_MSEIR(u,parametres)
@@ -165,6 +178,7 @@ function f_MSEIR(u,parametres)
     E = u[3]
     I = u[4]
     R = u[5]
+    V = u[6]
     N = parametres[1]
     beta = parametres[2]
     gamma = parametres[3]
@@ -179,7 +193,8 @@ function f_MSEIR(u,parametres)
     dE_dt = beta*I*S/N-(mu+epsilon)*E
     dI_dt = epsilon*E - (gamma+mu)*I
     dR_dt = gamma*I - mu*R
-    return [dM_dt,dS_dt,dE_dt,dI_dt,dR_dt]
+    dV_dt = 0
+    return [dM_dt,dS_dt,dE_dt,dI_dt,dR_dt,dV_dt]
 end
 
 function f_MSEIRS(u,parametres)
@@ -189,6 +204,7 @@ function f_MSEIRS(u,parametres)
     E = u[3]
     I = u[4]
     R = u[5]
+    V = u[6]
     N = parametres[1]
     beta = parametres[2]
     gamma = parametres[3]
@@ -203,7 +219,34 @@ function f_MSEIRS(u,parametres)
     dE_dt = beta*I*S/N-(mu+epsilon)*E
     dI_dt = epsilon*E - (gamma+mu)*I
     dR_dt = gamma*I - (mu+sigma)*R
-    return [dM_dt,dS_dt,dE_dt,dI_dt,dR_dt]
+    dV_dt = 0
+    return [dM_dt,dS_dt,dE_dt,dI_dt,dR_dt,dV_dt]
+end
+
+function f_MSEIRS(u,parametres)
+    """Calcule f(u) selon le modele MSEIRS avec dynamique demographique."""
+    M = u[1]
+    S = u[2]
+    E = u[3]
+    I = u[4]
+    R = u[5]
+    V = u[6]
+    N = parametres[1]
+    beta = parametres[2]
+    gamma = parametres[3]
+    Lambda = parametres[4]
+    mu = parametres[5]
+    delta = parametres[6]
+    epsilon = parametres[7]
+    sigma = parametres[8]
+    rho = parametres[9]
+    dM_dt = Lambda - (delta+mu)*M
+    dS_dt = delta*M - mu*S - beta*I*S/N + sigma*R
+    dE_dt = beta*I*S/N-(mu+epsilon)*E
+    dI_dt = epsilon*E - (gamma+mu)*I
+    dR_dt = gamma*I - (mu+sigma)*R
+    dV_dt = 0
+    return [dM_dt,dS_dt,dE_dt,dI_dt,dR_dt,dV_dt]
 end
 
 modeles = [f_SIR,f_SIR_dyn,f_SIS,f_MSIR,f_SEIR,f_SEIS,f_MSEIR,f_MSEIRS]
@@ -306,6 +349,7 @@ function trace(U,modele=None,methode=None,cree=True)
     E = U[:,3]
     I = U[:,4]
     R = U[:,5]
+    V = U[:,6]
     titre = "Evolution de l'epidemie au cours du temps"
     if cree
         figure()
@@ -314,6 +358,7 @@ function trace(U,modele=None,methode=None,cree=True)
         plot(temps,E,':',color="orange",label="E")
         plot(temps,I,':',color="red",label="I")
         plot(temps,R,':',color="green",label="R")
+        plot(temps,V,':',color="magenta",label="V")
         if modele != None
             titre += " modele " + noms_modeles[modeles.index(modele)]
         end
@@ -327,6 +372,7 @@ function trace(U,modele=None,methode=None,cree=True)
         plot(temps,E,':',color="orange")
         plot(temps,I,':',color="red")
         plot(temps,R,':',color="green")
+        plot(temps,V,':',color="magenta")
     end
     title(titre)
     xlabel("Temps en jours")
