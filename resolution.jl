@@ -233,11 +233,14 @@ modeles_sans_dyn = [f_SIR,f_SIS]
 ## Methodes de resolution
 function Euler_explicite(u0,f,parametres)
     """Resout le modele SIR avec la methode d'Euler explicite (ou Runge-Kutta d'ordre 1)."""
-    U = [u0]
+    U=zeros(Float64, nb_pts+1, length(u0))
+    U[1,:]=u0
     u = u0
+    i=1
     for t in temps[1:length(temps)-1]
+        i+=1
         u = u + pas*f(u,parametres)
-        U.append(u)
+        U[i,:]=u
     end
     return U
 end
@@ -267,22 +270,28 @@ end
 
 function Euler_implicite(u0,f,parametres)
     """Resout le modele SIR avec la methode d'Euler implicite."""
-    U = [u0]
+    U=zeros(Float64, nb_pts+1, length(u0))
+    U[1,:]=u0
     u = u0
+    i=1
     for t in temps[1:length(temps)-1]
+        i+=1
         u = Newton(u, x -> norm(u-x+pas*f(u,parametres)))
-        U.append(u)
+        U[i,:]=u
     end
     return U
 end
 
 function Heun(u0,f,parametres)
     """Resout le modele SIR avec la methode de Heun."""
-    U = [u0]
+    U=zeros(Float64, nb_pts+1, length(u0))
+    U[1,:]=u0
     u = u0
+    i=1
     for t in temps[1:length(temps)-1]
+        i+=1
         u = u + pas/2*(f(u,parametres)+f(u+pas*f(u,parametres),parametres))
-        U.append(u)
+        U[i,:]=u
     end
     return U
 end
@@ -333,28 +342,28 @@ function trace(U,modele=nothing,methode=nothing,cree=true)
     V = U[:,6]
     titre = "Evolution de l'epidemie au cours du temps"
     if cree
-        plot(temps,M,':',color="yellow",label="M")
-        plot(temps,S,':',color="blue",label="S")
-        plot(temps,E,':',color="orange",label="E")
-        plot(temps,I,':',color="red",label="I")
-        plot(temps,R,':',color="green",label="R")
-        plot(temps,V,':',color="magenta",label="V")
+        plot(temps,M,color="yellow",label="M")
+        plot(temps,S,color="blue",label="Susceptibles")
+        plot(temps,E,color="orange",label="Exposés")
+        plot(temps,I,color="red",label="Infectés")
+        plot(temps,R,color="green",label="Guéris")
+        plot(temps,V,color="magenta",label="Vaccinés")
         if modele != nothing
-            titre += " modele " + noms_modeles[modeles.index(modele)]
+            titre *= " modele " * (noms_modeles[findall(i->i==modele,modeles)])[1]
         end
         if methode != nothing
-            titre += " (methode " + noms_methodes[methodes.index(methode)] + ")"
+            titre *= " (methode " * (noms_methodes[findall(i->i==methode,methode)])[1] * ")"
         end
-        legend()
+        PyPlot.legend(loc="upper right")
     else
-        plot(temps,M,':',color="yellow")
-        plot(temps,S,':',color="blue")
-        plot(temps,E,':',color="orange")
-        plot(temps,I,':',color="red")
-        plot(temps,R,':',color="green")
-        plot(temps,V,':',color="magenta")
+        plot(temps,M,color="yellow")
+        plot(temps,S,color="blue")
+        plot(temps,E,color="orange")
+        plot(temps,I,color="red")
+        plot(temps,R,color="green")
+        plot(temps,V,color="magenta")
     end
-    title(titre)
+    PyPlot.title(titre)
     xlabel("Temps en jours")
     ylabel("Population")
 end
