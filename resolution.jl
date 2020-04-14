@@ -9,6 +9,8 @@ V : (vaccinated) population vaccinee
 Avec u = [M,S,E,I,R,V], le modèle donne l'equation : du/dt = f(u)
 avec f qui varie selon la complexite du modele. """
 
+using PyPlot
+
 ## Fonctions f du modele
 function f_SIR(u,parametres)
     """Calcule f(u) selon le modele SIR sans dynamique demographique."""
@@ -192,32 +194,6 @@ function f_MSEIR(u,parametres)
     dE_dt = beta*I*S/N-(mu+epsilon)*E
     dI_dt = epsilon*E - (gamma+mu)*I
     dR_dt = gamma*I - mu*R
-    dV_dt = 0
-    return [dM_dt,dS_dt,dE_dt,dI_dt,dR_dt,dV_dt]
-end
-
-function f_MSEIRS(u,parametres)
-    """Calcule f(u) selon le modele MSEIRS avec dynamique demographique."""
-    M = u[1]
-    S = u[2]
-    E = u[3]
-    I = u[4]
-    R = u[5]
-    V = u[6]
-    N = parametres[1]
-    beta = parametres[2]
-    gamma = parametres[3]
-    Lambda = parametres[4]
-    mu = parametres[5]
-    delta = parametres[6]
-    epsilon = parametres[7]
-    sigma = parametres[8]
-    rho = parametres[9]
-    dM_dt = Lambda - (delta+mu)*M
-    dS_dt = delta*M - mu*S - beta*I*S/N + sigma*R
-    dE_dt = beta*I*S/N-(mu+epsilon)*E
-    dI_dt = epsilon*E - (gamma+mu)*I
-    dR_dt = gamma*I - (mu+sigma)*R
     dV_dt = 0
     return [dM_dt,dS_dt,dE_dt,dI_dt,dR_dt,dV_dt]
 end
