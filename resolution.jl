@@ -342,7 +342,11 @@ function trace(U,modele=nothing,methode=nothing,cree=true)
     V = U[:,6]
     titre = "Evolution de l'epidemie au cours du temps"
     if cree
+<<<<<<< HEAD
         plot(temps,M,color="yellow",label="M",linestyle=":")
+=======
+        plot(temps,M,color="yellow",label="M",linestyle="--")
+>>>>>>> 486f1994e45e633ac895561151d15e659b5867f9
         plot(temps,S,color="blue",label="Susceptibles",linestyle=":")
         plot(temps,E,color="orange",label="Exposés",linestyle=":")
         plot(temps,I,color="red",label="Infectés",linestyle=":")
