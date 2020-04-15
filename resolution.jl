@@ -342,12 +342,12 @@ function trace(U,modele=nothing,methode=nothing,cree=true)
     V = U[:,6]
     titre = "Evolution de l'epidemie au cours du temps"
     if cree
-        plot(temps,M,color="yellow",label="M")
-        plot(temps,S,color="blue",label="Susceptibles")
-        plot(temps,E,color="orange",label="Exposés")
-        plot(temps,I,color="red",label="Infectés")
-        plot(temps,R,color="green",label="Guéris")
-        plot(temps,V,color="magenta",label="Vaccinés")
+        plot(temps,M,color="yellow",label="M",linestyle=":")
+        plot(temps,S,color="blue",label="Susceptibles",linestyle=":")
+        plot(temps,E,color="orange",label="Exposés",linestyle=":")
+        plot(temps,I,color="red",label="Infectés",linestyle=":")
+        plot(temps,R,color="green",label="Guéris",linestyle=":")
+        plot(temps,V,color="magenta",label="Vaccinés",linestyle=":")
         if modele != nothing
             titre *= " modele " * (noms_modeles[findall(i->i==modele,modeles)])[1]
         end
@@ -364,6 +364,7 @@ function trace(U,modele=nothing,methode=nothing,cree=true)
         plot(temps,V,color="magenta")
     end
     PyPlot.title(titre)
+    grid("on")
     xlabel("Temps en jours")
     ylabel("Population")
 end
