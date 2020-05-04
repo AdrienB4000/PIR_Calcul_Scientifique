@@ -1,10 +1,10 @@
 from tkinter import *
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
-
+import numpy as np
 import os
-os.chdir("C:/Users/belfe/OneDrive/Documents/Cours/Ponts_1A_2019-2020/PIR/")
-import propagation as prop
+#os.chdir("C:/Users/anton/Desktop/Travail/PONTS/projet recherche/PIR_Calcul_Scientifique/")
+import Propagation as prop
 
 #Paramètres par défaut
 alpha_def=0.2
@@ -26,7 +26,7 @@ liste_modeles=[prop.f_SIR,prop.f_SEIR,prop.f_SIR_dyn,prop.f_SIS]
 class Boutons:
     def __init__(self, master):
         #Titre fenetre
-        champ_label = Label(master, anchor=N, text="Modélisation")
+        champ_label = Label(master, anchor=N, text="Modélisation de l'évolution d'une population d'un million de personnes sur 80 jours")
         champ_label.pack()
 
         #Choix du modèle
@@ -95,17 +95,28 @@ class Boutons:
 
         fig = Figure()
         self.a = fig.add_subplot(111)
-        self.p1,=self.a.plot(temps,Susceptible,':',color="blue",label="S")
-        self.p2,=self.a.plot(temps,Infected,':',color="red",label="I")
-        self.p3,=self.a.plot(temps,Recovered,':',color="green",label="R")
-        self.p4,=self.a.plot(temps,Exposed,':',color="orange",label="E")
+        self.p1,=self.a.plot(temps,Susceptible,':',color="blue",label="Susceptibles")
+        self.p2,=self.a.plot(temps,Infected,':',color="red",label="Infectés")
+        self.p3,=self.a.plot(temps,Recovered,':',color="green",label="Guéris")
+        self.p4,=self.a.plot(temps,Exposed,':',color="orange",label="Exposés")
         self.a.legend()
+        self.a.set_xlabel('Nombre de jours')
+        self.a.set_ylabel('Population')
         self.canvas = FigureCanvasTkAgg(fig,master=master)
         self.canvas.get_tk_widget().pack()
+
+        #bouton pour quitter
+        quitter = Button(master, text = "Quitter ce super programme", command=master.destroy)
+        quitter.pack(side=BOTTOM)
 
         #Un bouton pour actualiser
         b=Button(master, text="Actualiser", command=self.affiche)
         b.pack(side=BOTTOM)
+
+        #Ajout d'un design de qualité
+        master.iconbitmap('enpc_favicon.ico')
+
+
 
     def change_limites_E(self,val):
         self.S.configure(to=1-self.E.get()-self.I.get()-self.R.get(), tickinterval=(1-self.E.get()-self.I.get()-self.R.get())/4)
@@ -143,6 +154,8 @@ class Boutons:
         self.p3.set_ydata(Recovered)
         self.p4.set_ydata(Exposed)
         self.a.legend()
+        self.a.set_xlabel('Nombre de jours')
+        self.a.set_ylabel('Population')
         self.canvas.draw()
 
 #Ouverture de la fenetre
