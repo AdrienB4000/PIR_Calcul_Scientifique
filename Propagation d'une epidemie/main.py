@@ -42,8 +42,8 @@ S_0 = N-I_0
 R_0 = 0
 u_0 = np.array([S_0,E_0,I_0,R_0]) # [S,E,I,R]
 
-methode = res.Runge_Kutta_4 # Methode de resolution
+methode = res.Euler_explicite # Methode de resolution
 modele = mod.f_SIR # Modele d'epidemie
 cree = True # Affiche le resultat sur une nouvelle fenetre
 
-aff.open(methode,N,duree,pas,temps,Lambda,mu,D_0)
+aff.open(methode,N,duree,pas,temps,Lambda,mu)
