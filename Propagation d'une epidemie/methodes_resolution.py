@@ -4,8 +4,17 @@ def Euler_explicite(u0,f,parametres,temps,pas):
     """Resout du/dt=f(u) avec la methode d'Euler explicite (ou Runge-Kutta d'ordre 1)."""
     U = [u0]
     u = u0
+    nb_pts_x = len(u0)
+    A = np.zeros((nb_pts_x,nb_pts_x))
+    for i in range(nb_pts_x-1):
+        A[i,i]=-2
+        A[i,i+1]=1
+        A[i+1,i]=1
+    A[0,0]=-1
+    A[-1,-1]=-1
+    A/=pas**2
     for t in temps[:-1]:
-        u = u + pas*f(u,parametres)
+        u = u + pas*f(u,parametres,A)
         U.append(u)
     return np.array(U)
 
@@ -32,8 +41,17 @@ def Euler_implicite(u0,f,parametres,temps,pas):
     """Resout du/dt=f(u) avec la methode d'Euler implicite."""
     U = [u0]
     u = u0
+    nb_pts_x = len(u0)
+    A = np.zeros((nb_pts_x,nb_pts_x))
+    for i in range(nb_pts_x-1):
+        A[i,i]=-2
+        A[i,i+1]=1
+        A[i+1,i]=1
+    A[0,0]=-1
+    A[-1,-1]=-1
+    A/=pas**2
     for t in temps[:-1]:
-        u = Newton(u,lambda x : np.linalg.norm(u-x+pas*f(u,parametres)))
+        u = Newton(u,lambda x : np.linalg.norm(u-x+pas*f(u,parametres,A)))
         U.append(u)
     return np.array(U)
 
@@ -41,8 +59,17 @@ def Heun(u0,f,parametres,temps,pas):
     """Resout du/dt=f(u) avec la methode de Heun."""
     U = [u0]
     u = u0
+    nb_pts_x = len(u0)
+    A = np.zeros((nb_pts_x,nb_pts_x))
+    for i in range(nb_pts_x-1):
+        A[i,i]=-2
+        A[i,i+1]=1
+        A[i+1,i]=1
+    A[0,0]=-1
+    A[-1,-1]=-1
+    A/=pas**2
     for t in temps[:-1]:
-        u = u + pas/2*(f(u,parametres)+f(u+pas*f(u,parametres),parametres))
+        u = u + pas/2*(f(u,parametres,A)+f(u+pas*f(u,parametres,A),parametres,A))
         U.append(u)
     return np.array(U)
 
@@ -50,8 +77,17 @@ def Runge_Kutta_2(u0,f,parametres,temps,pas):
     """Resout du/dt=f(u) avec la methode de Runge-Kutta d'ordre 2."""
     U = [u0]
     u = u0
+    nb_pts_x = len(u0)
+    A = np.zeros((nb_pts_x,nb_pts_x))
+    for i in range(nb_pts_x-1):
+        A[i,i]=-2
+        A[i,i+1]=1
+        A[i+1,i]=1
+    A[0,0]=-1
+    A[-1,-1]=-1
+    A/=pas**2
     for t in temps[:-1]:
-        u = u + pas*f(u+pas/2*f(u,parametres),parametres)
+        u = u + pas*f(u+pas/2*f(u,parametres,A),parametres,A)
         U.append(u)
     return np.array(U)
 
@@ -59,11 +95,20 @@ def Runge_Kutta_4(u0,f,parametres,temps,pas):
     """Resout du/dt=f(u) avec la methode de Runge-Kutta d'ordre 4."""
     U = [u0]
     u = u0
+    nb_pts_x = len(u0)
+    A = np.zeros((nb_pts_x,nb_pts_x))
+    for i in range(nb_pts_x-1):
+        A[i,i]=-2
+        A[i,i+1]=1
+        A[i+1,i]=1
+    A[0,0]=-1
+    A[-1,-1]=-1
+    A/=pas**2
     for t in temps[:-1]:
-        k1 = f(u,parametres)
-        k2 = f(u+pas/2*k1,parametres)
-        k3 = f(u+pas/2*k2,parametres)
-        k4 = f(u+pas*k3,parametres)
+        k1 = f(u,parametres,A)
+        k2 = f(u+pas/2*k1,parametres,A)
+        k3 = f(u+pas/2*k2,parametres,A)
+        k4 = f(u+pas*k3,parametres,A)
         u = u + pas/6*(k1+2*k2+2*k3+k4)
         U.append(u)
     return np.array(U)

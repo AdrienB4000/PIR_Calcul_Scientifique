@@ -21,21 +21,19 @@ u_def = np.array([S_def,E_def,I_def,R_def])
 
 modeles = mod.modeles
 
-def open(methode,N,duree,pas,temps,Lambda,mu):
+def open(methode,N,duree,pas,temps,Lambda,mu,dimension_espace):
     class Boutons:
-        def __init__(self, master, methode, N, duree, pas, temps, Lambda, mu):
+        def __init__(self, master, methode, N, duree, pas, temps, Lambda, mu, dimension_espace):
             # Titre fenetre
             champ_label = Label(master, anchor='n', text="Modélisation de l'évolution d'une population de " + str(N) + " personnes sur " + str(duree) + " jours")
             champ_label.pack()
 
             # Choix du modèle
-            self.liste = Listbox(master, height=5, width=25)
+            self.liste = Listbox(master, height=3, width=25)
             self.liste.pack(side=RIGHT)
             self.liste.insert(0, "Modèle SIR")
             self.liste.insert(1, "Modèle SIR avec dynamique")
-            self.liste.insert(2, "Modèle SIR avec diffusion")
-            self.liste.insert(3, "Modèle SEIR sans diffusion")
-            self.liste.insert(4, "Modèle SEIR avec diffusion")
+            self.liste.insert(2, "Modèle SEIR sans diffusion")
             self.liste.select_set(0)
 
             # Choix des paramètres d'évolution
@@ -130,5 +128,5 @@ def open(methode,N,duree,pas,temps,Lambda,mu):
     fenetre.title("Modélisation de la propagation d'une épidémie")
     fenetre.geometry("1300x600+30+30")
 
-    boutons = Boutons(fenetre,methode,N,duree,pas,temps,Lambda,mu)
+    boutons = Boutons(fenetre,methode,N,duree,pas,temps,Lambda,mu,dimension_espace)
     fenetre.mainloop()

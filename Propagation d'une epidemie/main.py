@@ -32,18 +32,26 @@ mu = 0.009/365 # Taux de mortalite (nb/pers/jour)
 alpha_0 = 1/5 # Inverse de la duree d'incubation
 # R_0 represente le nombre de contact par pers. infectee, varie selon le choix de f.
 D_0 = 1
+dimension_espace = 2
+diffusion = 0 # 0 si non 1 si oui
 
 parametres = [N,beta_0,gamma_0,Lambda,mu,alpha_0,D_0]
 
-# Parametres de resolution
-E_0 = 0
-I_0 = 10
-S_0 = N-I_0
-R_0 = 0
-u_0 = np.array([S_0,E_0,I_0,R_0]) # [S,E,I,R]
-
 methode = res.Euler_explicite # Methode de resolution
-modele = mod.f_SIR # Modele d'epidemie
-cree = True # Affiche le resultat sur une nouvelle fenetre
 
-aff.open(methode,N,duree,pas,temps,Lambda,mu)
+nb_pts_x = 100
+
+A = np.zeros((nb_pts_x,nb_pts_x))
+for i in range(nb_pts_x-1):
+    A[i,i]=-2
+    A[i,i+1]=1
+    A[i+1,i]=1
+A[0,0]=-1
+A[-1,-1]=-1
+A/=pas**2
+
+u0=np.array([[0.9*N,0,0.1*N,0] for i in range(nb_pts_x)])
+U = res.Euler_explicite(u0,modeles[3],parametres,temps,pas)
+print(U)
+
+#aff.open(methode,N,duree,pas,temps,Lambda,mu,dimension_espace)
