@@ -84,8 +84,8 @@ def Euler_implicite(u0,f,parametres,temps,pas_t):
 
     # Résolution
     for t in temps[:-1]:
-        #u = Newton_lent(u,lambda x : u-x+pas_t*f(u,parametres,A))#norme
-        u = Newton(u,lambda x : u-x+pas_t*f(u,parametres,A),mod.jacobiennes[mod.modeles.index(f)],pas_t,parametres)
+        u = Newton_lent(u,lambda x : np.linalg.norm(u-x+pas_t*f(u,parametres,A)))
+        #u = Newton(u,lambda x : u-x+pas_t*f(u,parametres,A),mod.jacobiennes[mod.modeles.index(f)],pas_t,parametres)
         U.append(u)
     return np.array(U)
 
