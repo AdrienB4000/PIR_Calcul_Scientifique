@@ -1,10 +1,18 @@
 import numpy as np
+import os
+os.chdir("C:/Users/Anthony/Desktop/COV_A5/")
+import modelisation as mod
 
-def Euler_explicite(u0,f,parametres,temps,pas):
+
+
+def Euler_explicite(u0,f,parametres,temps,pas_t):
     """Resout du/dt=f(u) avec la methode d'Euler explicite (ou Runge-Kutta d'ordre 1)."""
     U = [u0]
     u = u0
+
+    # Calcul de la matrice A, necessaire uniquement pour la diffusion
     nb_pts_x = len(u0)
+    pas_x = 1 / nb_pts_x # car la distance est unitaire
     A = np.zeros((nb_pts_x,nb_pts_x))
     for i in range(nb_pts_x-1):
         A[i,i]=-2
@@ -12,13 +20,15 @@ def Euler_explicite(u0,f,parametres,temps,pas):
         A[i+1,i]=1
     A[0,0]=-1
     A[-1,-1]=-1
-    A/=pas**2
+    A/=pas_x**2
+
+    # Résolution
     for t in temps[:-1]:
-        u = u + pas*f(u,parametres,A)
+        u = u + pas_t*f(u,parametres,A)
         U.append(u)
     return np.array(U)
 
-def Newton(x0,h):
+def Newton_lent(x0,h):
     """Resout l'equation h(x)=0 en partant de x0 avec la methode de Newton."""
     x = x0
     epsilon = 1e-5
@@ -37,11 +47,32 @@ def Newton(x0,h):
                 break
     return x
 
-def Euler_implicite(u0,f,parametres,temps,pas):
+def Newton(x0,h,jacobienne,pas_t,parametres):
+    """Resout l'equation h(x)=0 en partant de x0 avec la methode de Newton."""
+    x = x0
+    epsilon = 1e-4
+    nb_max = 100
+    for i in range(nb_max):
+        dh = np.identity(4) - pas_t*jacobienne(x,parametres)
+        if np.linalg.matrix_rank(dh)!=4:
+            print("Probleme : impossible de resoudre le modele avec la methode d'Euler implicite\n")
+            break
+            dh = dh + 0.1*np.identity(4)
+            break
+        else:
+            dx = -np.linalg.solve(dh,h(x))
+            x = x + dx
+            if np.linalg.norm(dx) < epsilon:
+                break
+    return x
+
+def Euler_implicite(u0,f,parametres,temps,pas_t):
     """Resout du/dt=f(u) avec la methode d'Euler implicite."""
     U = [u0]
     u = u0
+    # Calcul de la matrice A, necessaire uniquement pour la diffusion
     nb_pts_x = len(u0)
+    pas_x = 1 / nb_pts_x # car la distance est unitaire
     A = np.zeros((nb_pts_x,nb_pts_x))
     for i in range(nb_pts_x-1):
         A[i,i]=-2
@@ -49,17 +80,22 @@ def Euler_implicite(u0,f,parametres,temps,pas):
         A[i+1,i]=1
     A[0,0]=-1
     A[-1,-1]=-1
-    A/=pas**2
+    A/=pas_x**2
+
+    # Résolution
     for t in temps[:-1]:
-        u = Newton(u,lambda x : np.linalg.norm(u-x+pas*f(u,parametres,A)))
+        #u = Newton_lent(u,lambda x : u-x+pas_t*f(u,parametres,A))#norme
+        u = Newton(u,lambda x : u-x+pas_t*f(u,parametres,A),mod.jacobiennes[mod.modeles.index(f)],pas_t,parametres)
         U.append(u)
     return np.array(U)
 
-def Heun(u0,f,parametres,temps,pas):
+def Heun(u0,f,parametres,temps,pas_t):
     """Resout du/dt=f(u) avec la methode de Heun."""
     U = [u0]
     u = u0
+    # Calcul de la matrice A, necessaire uniquement pour la diffusion
     nb_pts_x = len(u0)
+    pas_x = 1 / nb_pts_x # car la distance est unitaire
     A = np.zeros((nb_pts_x,nb_pts_x))
     for i in range(nb_pts_x-1):
         A[i,i]=-2
@@ -67,17 +103,21 @@ def Heun(u0,f,parametres,temps,pas):
         A[i+1,i]=1
     A[0,0]=-1
     A[-1,-1]=-1
-    A/=pas**2
+    A/=pas_x**2
+
+    # Résolution
     for t in temps[:-1]:
-        u = u + pas/2*(f(u,parametres,A)+f(u+pas*f(u,parametres,A),parametres,A))
+        u = u + pas_t/2*(f(u,parametres,A)+f(u+pas_t*f(u,parametres,A),parametres,A))
         U.append(u)
     return np.array(U)
 
-def Runge_Kutta_2(u0,f,parametres,temps,pas):
+def Runge_Kutta_2(u0,f,parametres,temps,pas_t):
     """Resout du/dt=f(u) avec la methode de Runge-Kutta d'ordre 2."""
     U = [u0]
     u = u0
+    # Calcul de la matrice A, necessaire uniquement pour la diffusion
     nb_pts_x = len(u0)
+    pas_x = 1 / nb_pts_x # car la distance est unitaire
     A = np.zeros((nb_pts_x,nb_pts_x))
     for i in range(nb_pts_x-1):
         A[i,i]=-2
@@ -85,17 +125,21 @@ def Runge_Kutta_2(u0,f,parametres,temps,pas):
         A[i+1,i]=1
     A[0,0]=-1
     A[-1,-1]=-1
-    A/=pas**2
+    A/=pas_x**2
+
+    # Résolution
     for t in temps[:-1]:
-        u = u + pas*f(u+pas/2*f(u,parametres,A),parametres,A)
+        u = u + pas_t*f(u+pas_t/2*f(u,parametres,A),parametres,A)
         U.append(u)
     return np.array(U)
 
-def Runge_Kutta_4(u0,f,parametres,temps,pas):
+def Runge_Kutta_4(u0,f,parametres,temps,pas_t):
     """Resout du/dt=f(u) avec la methode de Runge-Kutta d'ordre 4."""
     U = [u0]
     u = u0
+    # Calcul de la matrice A, necessaire uniquement pour la diffusion
     nb_pts_x = len(u0)
+    pas_x = 1 / nb_pts_x # car la distance est unitaire
     A = np.zeros((nb_pts_x,nb_pts_x))
     for i in range(nb_pts_x-1):
         A[i,i]=-2
@@ -103,13 +147,15 @@ def Runge_Kutta_4(u0,f,parametres,temps,pas):
         A[i+1,i]=1
     A[0,0]=-1
     A[-1,-1]=-1
-    A/=pas**2
+    A/=pas_x**2
+
+    # Résolution
     for t in temps[:-1]:
         k1 = f(u,parametres,A)
-        k2 = f(u+pas/2*k1,parametres,A)
-        k3 = f(u+pas/2*k2,parametres,A)
-        k4 = f(u+pas*k3,parametres,A)
-        u = u + pas/6*(k1+2*k2+2*k3+k4)
+        k2 = f(u+pas_t/2*k1,parametres,A)
+        k3 = f(u+pas_t/2*k2,parametres,A)
+        k4 = f(u+pas_t*k3,parametres,A)
+        u = u + pas_t/6*(k1+2*k2+2*k3+k4)
         U.append(u)
     return np.array(U)
 

@@ -2,6 +2,7 @@ from tkinter import *
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 import numpy as np
+import matplotlib.pyplot as plt
 
 import os
 os.chdir("C:/Users/Anthony/Desktop/COV_A5/")
@@ -18,40 +19,38 @@ noms_methodes = res.noms_methodes
 ## Paramètres
 
 # Parametres d'affichage
-duree = 80 # Duree (jour)
-nb_pts = 10000
-pas = duree/nb_pts
-temps = np.linspace(0,duree,nb_pts)
+duree = 60 # Duree (jour)
+nb_pts_t = 100
+pas_t = duree/nb_pts_t
+temps = np.linspace(0,duree,nb_pts_t)
 
 # Parametres de modelistaion
-N = 100000 # Population totale
-beta_0 = 1.4 # Contacts par pers. infectee par jour
-gamma_0 = 1/12 # Inverse de la duree de guerison
-Lambda = 0.012/365*N # Natalite (nb/jour)
-mu = 0.009/365 # Taux de mortalite (nb/pers/jour)
-alpha_0 = 1/5 # Inverse de la duree d'incubation
-# R_0 represente le nombre de contact par pers. infectee, varie selon le choix de f.
-D_0 = 1
-dimension_espace = 2
+N_pop = 10000 # Population totale
+
 diffusion = 0 # 0 si non 1 si oui
+nb_pts_x = 8
 
-parametres = [N,beta_0,gamma_0,Lambda,mu,alpha_0,D_0]
+# Methode de resolution
+methode = res.Euler_implicite
 
-methode = res.Euler_explicite # Methode de resolution
+# Choix de u0 pour le cas avec diffusion
+u0 = N_pop / (nb_pts_x-1) * np.array([[i,0,(nb_pts_x-1-i),0] for i in range(nb_pts_x)])
 
-nb_pts_x = 100
+aff.open(methode,N_pop,duree,pas_t,temps,diffusion,u0)
 
-A = np.zeros((nb_pts_x,nb_pts_x))
-for i in range(nb_pts_x-1):
-    A[i,i]=-2
-    A[i,i+1]=1
-    A[i+1,i]=1
-A[0,0]=-1
-A[-1,-1]=-1
-A/=pas**2
 
-u0=np.array([[0.9*N,0,0.1*N,0] for i in range(nb_pts_x)])
-U = res.Euler_explicite(u0,modeles[3],parametres,temps,pas)
-print(U)
 
-#aff.open(methode,N,duree,pas,temps,Lambda,mu,dimension_espace)
+
+
+
+
+
+"""
+parametres=[N_pop,1.4,0.1,0.2,0.01]
+U=methode(u0,mod.f_SIR_D,parametres,temps,pas_t)
+dist=np.array(range(nb_pts_x))/(nb_pts_x-1)
+for i in range(8):
+    plt.plot(dist,U[i][:,0],label=str(i))
+plt.legend()
+plt.show()#"""
+
