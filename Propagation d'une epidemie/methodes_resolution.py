@@ -18,6 +18,7 @@ def Euler_explicite(u0,f,parametres,temps,pas_t):
         A[i,i]=-2
         A[i,i+1]=1
         A[i+1,i]=1
+    # Conditions de Neumann
     A[0,0]=-1
     A[-1,-1]=-1
     A/=pas_x**2
@@ -53,10 +54,10 @@ def Newton(x0,h,jacobienne,pas_t,parametres):
     epsilon = 1e-4
     nb_max = 100
     for i in range(nb_max):
-        dh = np.identity(4) - pas_t*jacobienne(x,parametres)
-        if np.linalg.matrix_rank(dh)!=4:
+        dh = np.identity(5) - pas_t*jacobienne(x,parametres)
+        if np.linalg.matrix_rank(dh)!=5:
             print("Probleme : impossible de resoudre le modele avec la methode d'Euler implicite\n")
-            dh = dh + 0.1*np.identity(4)
+            dh = dh + 0.1*np.identity(5)
             break
         else:
             dx = -np.linalg.solve(dh,h(x))
@@ -77,6 +78,7 @@ def Euler_implicite(u0,f,parametres,temps,pas_t):
         A[i,i]=-2
         A[i,i+1]=1
         A[i+1,i]=1
+    # Conditions de Neumann
     A[0,0]=-1
     A[-1,-1]=-1
     A/=pas_x**2
@@ -100,6 +102,7 @@ def Heun(u0,f,parametres,temps,pas_t):
         A[i,i]=-2
         A[i,i+1]=1
         A[i+1,i]=1
+    # Conditions de Neumann
     A[0,0]=-1
     A[-1,-1]=-1
     A/=pas_x**2
@@ -122,6 +125,7 @@ def Runge_Kutta_2(u0,f,parametres,temps,pas_t):
         A[i,i]=-2
         A[i,i+1]=1
         A[i+1,i]=1
+    # Conditions de Neumann
     A[0,0]=-1
     A[-1,-1]=-1
     A/=pas_x**2
@@ -144,6 +148,7 @@ def Runge_Kutta_4(u0,f,parametres,temps,pas_t):
         A[i,i]=-2
         A[i,i+1]=1
         A[i+1,i]=1
+    # Conditions de Neumann
     A[0,0]=-1
     A[-1,-1]=-1
     A/=pas_x**2

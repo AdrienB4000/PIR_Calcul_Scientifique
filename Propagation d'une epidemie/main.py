@@ -26,14 +26,14 @@ pas_t = duree/nb_pts_t
 # Parametres de modelistaion
 N_pop = 10000 # Population totale
 
-diffusion = 0 # 0 si non 1 si oui
+diffusion = 1 # 0 si non 1 si oui
 nb_pts_x = 8
 
 # Methode de resolution
-methode = res.Euler_implicite
+methode = res.Euler_explicite
 
 # Choix de u0 pour le cas avec diffusion
-u0 = N_pop / (nb_pts_x-1) * np.array([[i,0,(nb_pts_x-1-i),0] for i in range(nb_pts_x)])
+u0 = N_pop / (nb_pts_x-1) * np.array([[i,0,(nb_pts_x-1-i),0,0] for i in range(nb_pts_x)])
 
 aff.open(methode,N_pop,duree,pas_t,diffusion,u0)
 
