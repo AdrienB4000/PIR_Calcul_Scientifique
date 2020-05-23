@@ -1,6 +1,6 @@
 import numpy as np
 import os
-os.chdir("C:/Users/Anthony/Desktop/COV_A5/")
+os.chdir("C:/Users/Anthony/Desktop/")
 import modelisation as mod
 
 
@@ -56,7 +56,6 @@ def Newton(x0,h,jacobienne,pas_t,parametres):
         dh = np.identity(4) - pas_t*jacobienne(x,parametres)
         if np.linalg.matrix_rank(dh)!=4:
             print("Probleme : impossible de resoudre le modele avec la methode d'Euler implicite\n")
-            break
             dh = dh + 0.1*np.identity(4)
             break
         else:
@@ -84,8 +83,8 @@ def Euler_implicite(u0,f,parametres,temps,pas_t):
 
     # Résolution
     for t in temps[:-1]:
-        u = Newton_lent(u,lambda x : np.linalg.norm(u-x+pas_t*f(u,parametres,A)))
-        #u = Newton(u,lambda x : u-x+pas_t*f(u,parametres,A),mod.jacobiennes[mod.modeles.index(f)],pas_t,parametres)
+        #u = Newton_lent(u,lambda x : np.linalg.norm(u-x+pas_t*f(u,parametres,A)))
+        u = Newton(u,lambda x : u-x+pas_t*f(u,parametres,A),mod.jacobiennes[mod.modeles.index(f)],pas_t,parametres)
         U.append(u)
     return np.array(U)
 

@@ -5,7 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 import os
-os.chdir("C:/Users/Anthony/Desktop/COV_A5/")
+os.chdir("C:/Users/Anthony/Desktop/")
 import methodes_resolution as res
 import modelisation as mod
 
@@ -13,7 +13,7 @@ import modelisation as mod
 alpha_def = 0.2
 beta_def = 1.4
 gamma_def = 0.1
-D_def = 0.01
+D_def = 0.001
 S_def = 0.9
 E_def = 0.
 I_def = 0.1
@@ -22,9 +22,11 @@ u_def = np.array([S_def,E_def,I_def,R_def])
 
 modeles = mod.modeles # Les modèles sont classés d'abord sans diffusion puis ensuite avec.
 
-def open(methode, N_pop, duree, pas_t, temps, diffusion, u0):
+def open(methode, N_pop, duree, pas_t, diffusion, u0):
     class Boutons:
-        def __init__(self, master, methode, N_pop, duree, pas_t, temps, diffusion, u0):
+        def __init__(self, master, methode, N_pop, duree, pas_t, diffusion, u0):
+            temps = np.linspace(0,duree,int(duree/pas_t))
+
             # Titre fenetre
             champ_label = Label(master, anchor='n', text="Modélisation de l'évolution d'une population de " + str(N_pop) + " personnes sur " + str(duree) + " jours " + diffusion*"avec" + (1-diffusion)*"sans" + " diffusion")
             champ_label.pack()
@@ -106,7 +108,7 @@ def open(methode, N_pop, duree, pas_t, temps, diffusion, u0):
                 self.p3,=self.a.plot(distance,I,':',color="red",label="I")
                 self.p4,=self.a.plot(distance,R,':',color="green",label="R")
                 self.a.axis([0-0.05,1+0.05,0-0.05,1+0.05])
-                self.a.set_xlabel("Nombre de jours")
+                self.a.set_xlabel("Distance")
             self.a.legend()
             self.a.set_ylabel("Population")
             self.canvas = FigureCanvasTkAgg(fig,master=master)
@@ -124,6 +126,7 @@ def open(methode, N_pop, duree, pas_t, temps, diffusion, u0):
             #master.iconbitmap("enpc_favicon.ico")
 
         def affiche(self):
+            temps = np.linspace(0,duree,int(duree/pas_t))
             # Selection du modele
             modele = modeles[self.liste.curselection()[0] + 2*diffusion] # car dans modeles il y a d'abord 3 modèles sans diffusion puis 2 avec.
 
@@ -147,19 +150,22 @@ def open(methode, N_pop, duree, pas_t, temps, diffusion, u0):
                 parametres = [N_pop,self.beta.get(),self.gamma.get(),self.alpha.get(),self.D.get()]
 
                 U = methode(u0,modele,parametres,temps,pas_t) / N_pop
-                # A MODIFIER : IL FAUT AFFICHER A CHAQUE INSTANT EN UTILISANT PLT.PAUSE()
                 # pour obtenir S pour chaque distance à l'instant t on utilise U[t][:,0]
-                for t in range(len(temps)):
-                    S = U[t][:,0]
-                    E = U[t][:,1]
-                    I = U[t][:,2]
-                    R = U[t][:,3]
+                temps_a_afficher = [[0,5],[15,30]]
+                nb_temps_ligne = len(temps_a_afficher)
+                nb_temps_colonne = len(temps_a_afficher[0])
+                for i,temps_ligne in enumerate(range(nb_temps_ligne)):
+                    for j,t in enumerate(range(nb_temps_colonne)):
+                        plt.subplot(nb_temps_ligne,nb_temps_colonne,i*nb_temps_colonne+j+1)
+                        S = U[t][:,0]
+                        E = U[t][:,1]
+                        I = U[t][:,2]
+                        R = U[t][:,3]
 
-                    self.p1.set_ydata(S)
-                    self.p2.set_ydata(E)
-                    self.p3.set_ydata(I)
-                    self.p4.set_ydata(R)
-                    #plt.pause(0.1)
+                        self.p1.set_ydata(S)
+                        self.p2.set_ydata(E)
+                        self.p3.set_ydata(I)
+                        self.p4.set_ydata(R)
             self.canvas.draw()
 
     #Ouverture de la fenetre
@@ -167,5 +173,5 @@ def open(methode, N_pop, duree, pas_t, temps, diffusion, u0):
     fenetre.title("Modélisation de la propagation d'une épidémie")
     fenetre.geometry("1300x600+30+30")
 
-    boutons = Boutons(fenetre, methode, N_pop, duree, pas_t, temps, diffusion, u0)
+    boutons = Boutons(fenetre, methode, N_pop, duree, pas_t, diffusion, u0)
     fenetre.mainloop()
