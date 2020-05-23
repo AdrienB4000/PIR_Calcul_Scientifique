@@ -54,8 +54,8 @@ def Newton(x0,h,jacobienne,pas_t,parametres):
     epsilon = 1e-4
     nb_max = 100
     for i in range(nb_max):
-        dh = np.identity(5) - pas_t*jacobienne(x,parametres)
-        if np.linalg.matrix_rank(dh)!=5:
+        dh = jacobienne(x)
+        if np.linalg.matrix_rank(dh)!=len(dh):
             print("Probleme : impossible de resoudre le modele avec la methode d'Euler implicite\n")
             dh = dh + 0.1*np.identity(5)
             break
@@ -84,9 +84,13 @@ def Euler_implicite(u0,f,parametres,temps,pas_t):
     A/=pas_x**2
 
     # Résolution
+    def h(x):
+        return x-u-pas_t*f(x,parametres,A)
+    def jac_h(x):
+        return np.identity(5) - pas_t*mod.jacobiennes[mod.modeles.index(f)](x,parametres)
     for t in temps[:-1]:
-        #u = Newton_lent(u,lambda x : np.linalg.norm(u-x+pas_t*f(u,parametres,A)))
-        u = Newton(u,lambda x : u-x+pas_t*f(u,parametres,A),mod.jacobiennes[mod.modeles.index(f)],pas_t,parametres)
+        #u = Newton_lent(u,lambda x : np.linalg.norm(x-u-pas_t*f(x,parametres,A)))
+        u = Newton(u,h,jac_h,pas_t,parametres)
         U.append(u)
     return np.array(U)
 

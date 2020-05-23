@@ -110,6 +110,7 @@ def open(methode, N_pop, duree, pas_t, diffusion, u0):
                 self.a.set_xlabel("Nombre de jours")
                 self.a.legend()
                 self.a.set_ylabel("Population")
+                self.a.set_title("Methode " + res.noms_methodes[res.methodes.index(methode)])
             else:
                 U = methode(u0,modele,[N_pop,beta_def,gamma_def,alpha_def,delta_def,eta_def,D_def],temps,pas_t) / N_pop
 
@@ -181,7 +182,7 @@ def open(methode, N_pop, duree, pas_t, diffusion, u0):
                 temps_a_afficher = [[0,5],[15,30]]
                 nb_temps_ligne = len(temps_a_afficher)
                 nb_temps_colonne = len(temps_a_afficher[0])
-                fig=Figure()
+                fig = Figure()
                 for i,temps_ligne in enumerate(range(nb_temps_ligne)):
                     for j,t in enumerate(range(nb_temps_colonne)):
                         self.a = fig.add_subplot(nb_temps_ligne,nb_temps_colonne,i*nb_temps_colonne+j+1)
