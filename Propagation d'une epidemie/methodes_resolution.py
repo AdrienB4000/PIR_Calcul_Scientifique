@@ -1,6 +1,5 @@
 import numpy as np
 import os
-os.chdir("C:/Users/Anthony/Desktop/")
 import modelisation as mod
 
 
