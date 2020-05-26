@@ -9,10 +9,6 @@ import methodes_resolution as res
 import modelisation as mod
 import affichage as aff
 
-"""
-Todo: bouton méthode
-
-"""
 
 modeles = mod.modeles
 noms_modeles = mod.noms_modeles
