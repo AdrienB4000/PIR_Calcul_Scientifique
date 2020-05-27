@@ -76,7 +76,7 @@ def open(N_pop, duree, pas_t, u0):
             self.delta.set(delta_def)
             self.delta.pack(side=BOTTOM)
 
-            self.eta=Scale(F1, orient="horizontal", from_=0, to=4, resolution=0.1, label="Taux de guerison de traitement", tickinterval=1., length=250)
+            self.eta=Scale(F1, orient="horizontal", from_=0, to=2, resolution=0.1, label="Taux de guerison de traitement", tickinterval=1., length=250)
             self.eta.set(eta_def)
             self.eta.pack(side=BOTTOM)
 
