@@ -68,7 +68,7 @@ def Euler_implicite(u0,f,parametres,temps,pas_t):
     # On change la forme de u pour pouvoir utiliser Newton, qui ne s'utilise qu'avec un vecteur
     def h(x):
         return x-u-pas_t*np.reshape(f(np.reshape(x,np.shape(u0)),parametres,A),-1)
-    def jac_h(h,x):
+    def jac_h(x):
         eps = 1e-6
         return np.identity(len(x)) - pas_t*mod.jacobiennes[mod.modeles.index(f)](x,parametres)
     u = np.reshape(u,-1)
