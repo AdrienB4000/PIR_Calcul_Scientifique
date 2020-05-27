@@ -2,24 +2,17 @@ from tkinter import *
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 import numpy as np
-import matplotlib.pyplot as plt
+from math import *
 
 import os
 import methodes_resolution as res
 import modelisation as mod
 import affichage as aff
 
-
-modeles = mod.modeles
-noms_modeles = mod.noms_modeles
-
-methodes = res.methodes
-noms_methodes = res.noms_methodes
-
 ## Paramètres
 
 # Parametres d'affichage
-duree = 60 # Duree (jour)
+duree = 50 # Duree (jour)
 nb_pts_t = 1000
 pas_t = duree/nb_pts_t
 
@@ -27,10 +20,16 @@ pas_t = duree/nb_pts_t
 N_pop = 10000 # Population totale
 
 diffusion = 0 # 0 si non 1 si oui
-nb_pts_x = 8
-
+nb_pts_x = 9
 
 # Choix de u0 pour le cas avec diffusion
-u0 = N_pop / (nb_pts_x-1) * np.array([[i,0,(nb_pts_x-1-i),0,0] for i in range(nb_pts_x)])
+x = np.linspace(0, 1, nb_pts_x)
+sigma = 0.2
+I0 = N_pop/2/pi/sigma*np.exp(-((x-1/2)/sigma)**2)
+S0 = N_pop*np.ones(nb_pts_x) - I0
+u0 = np.zeros((nb_pts_x,5))
+u0[:,0] = S0
+u0[:,2] = I0
+#u0 = N_pop / (nb_pts_x-1) * np.array([[(nb_pts_x-1)-4*i*(1-i/(nb_pts_x-1)),0,4*i*(1-i/(nb_pts_x-1)),0,0] for i in range(nb_pts_x)])
 
-aff.open(N_pop,duree,pas_t,u0)
+aff.open(N_pop, duree, pas_t, u0)
