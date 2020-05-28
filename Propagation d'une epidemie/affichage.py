@@ -8,11 +8,12 @@ import methodes_resolution as res
 import modelisation as mod
 
 # Paramètres par défaut
-alpha_def = 0.2
 beta_def = 1.4
 gamma_def = 0.1
+alpha_def = 0.2
 delta_def = 0.5
 eta_def = 0.8
+tau_def = 0.2
 D_def = 0.05
 # On suppose qu'à l'instant initial il n'y a que S ou I.
 S_def = 0.9
@@ -45,7 +46,7 @@ def open(N_pop, duree, pas_t, u0):
             self.liste.select_set(0)
 
             # Choix de la méthode de résolution
-            self.liste_methode = Listbox(master, height=5, width=20, exportselection=0)
+            self.liste_methode = Listbox(master, height=len(res.noms_methodes), width=20, exportselection=0)
             self.liste_methode.pack(side=RIGHT)
             for i in range(len(res.noms_methodes)):
                 self.liste_methode.insert(i, res.noms_methodes[i])
@@ -60,28 +61,32 @@ def open(N_pop, duree, pas_t, u0):
             self.checkbox_diffusion = Checkbutton(F1, text="diffusion", onvalue=1, offvalue=0, variable=self.var1)
             self.checkbox_diffusion.pack(side=TOP)
 
-            self.beta=Scale(F1, orient="horizontal", from_=0, to=4, resolution=0.1, label="Contacts par pers. infectee par jour", tickinterval=1., length=250)
+            self.beta=Scale(F1, orient="horizontal", from_=0, to=4, resolution=0.1, label="Contacts par pers. infectee par jour", tickinterval=1., length=320)
             self.beta.set(beta_def)
             self.beta.pack(side=TOP)
 
-            self.gamma=Scale(F1, orient="horizontal", from_=0, to=1, resolution=0.05, label="Inverse de la duree de guerison", tickinterval=0.25, length=250)
+            self.gamma=Scale(F1, orient="horizontal", from_=0, to=1, resolution=0.05, label="Taux de guerison", tickinterval=0.25, length=320)
             self.gamma.set(gamma_def)
-            self.gamma.pack(side=BOTTOM)
+            self.gamma.pack(side=TOP)
 
-            self.alpha=Scale(F1, orient="horizontal", from_=0, to=1, resolution=0.05, label="Inverse de la duree d'incubation", tickinterval=0.25, length=250)
+            self.alpha=Scale(F1, orient="horizontal", from_=0, to=1, resolution=0.05, label="Taux d'incubation (SEIR)", tickinterval=0.25, length=320)
             self.alpha.set(alpha_def)
-            self.alpha.pack(side=BOTTOM)
+            self.alpha.pack(side=TOP)
 
-            self.delta=Scale(F1, orient="horizontal", from_=0, to=1, resolution=0.05, label="Taux d'infection des personnes traitees", tickinterval=0.25, length=250)
+            self.delta=Scale(F1, orient="horizontal", from_=0, to=1, resolution=0.05, label="Taux d'infection des personnes traitees (SIRT)", tickinterval=0.25, length=320)
             self.delta.set(delta_def)
-            self.delta.pack(side=BOTTOM)
+            self.delta.pack(side=TOP)
 
-            self.eta=Scale(F1, orient="horizontal", from_=0, to=2, resolution=0.1, label="Taux de guerison de traitement", tickinterval=1., length=250)
+            self.eta=Scale(F1, orient="horizontal", from_=0, to=2, resolution=0.1, label="Taux de guerison du traitement (SIRT)", tickinterval=1., length=320)
             self.eta.set(eta_def)
-            self.eta.pack(side=BOTTOM)
+            self.eta.pack(side=TOP)
+
+            self.tau=Scale(F1, orient="horizontal", from_=0, to=2, resolution=0.1, label="Taux de traitement (SIRT)", tickinterval=1., length=320)
+            self.tau.set(tau_def)
+            self.tau.pack(side=TOP)
 
             # Choix du paramètre de diffusion
-            self.D=Scale(F1, orient="horizontal", from_=0, to=0.1, resolution=0.005, label="Parametre de diffusion", tickinterval=2., length=250)
+            self.D=Scale(F1, orient="horizontal", from_=0, to=0.1, resolution=0.005, label="Parametre de diffusion", tickinterval=2., length=320)
             self.D.set(D_def)
             self.D.pack(side=BOTTOM)
 
@@ -90,7 +95,7 @@ def open(N_pop, duree, pas_t, u0):
             # Choix des paramètres initiaux (sans diffusion uniquement, sinon c'est trop compliqué à choisir)
             F2 = LabelFrame(F, text="Paramètre initial")
 
-            self.I=Scale(F2, orient='horizontal', from_=0, to=1, resolution=0.01, label="Taux d'infectés initial", tickinterval=0.25, length=250)
+            self.I=Scale(F2, orient='horizontal', from_=0, to=1, resolution=0.01, label="Taux d'infectés initial", tickinterval=0.25, length=320)
             self.I.set(I_def)
             self.I.pack(side=BOTTOM)
 
@@ -109,13 +114,11 @@ def open(N_pop, duree, pas_t, u0):
             # Affichage
             self.fig = Figure()
 
-            U = self.methode(N_pop*u_def,modele,[N_pop,beta_def,gamma_def,alpha_def,delta_def,eta_def],temps,pas_t) / N_pop
+            U = self.methode(N_pop*u_def,modele,[N_pop,beta_def,gamma_def,alpha_def,delta_def,eta_def,tau_def],temps,pas_t) / N_pop
             self.a = self.fig.add_subplot(111)
             self.p1,=self.a.plot(temps, U[:,0], ':', color="blue", label="S")
-            #self.p2,=self.a.plot(temps, U[:,1], ':', color="orange", label="E")
             self.p3,=self.a.plot(temps, U[:,2], ':', color="red", label="I")
             self.p4,=self.a.plot(temps, U[:,3], ':', color="green", label="R")
-            #self.p5,=self.a.plot(temps, U[:,4], ':', color="black", label="T")
             self.a.axis([0-duree/20,duree+duree/20,0-0.05,1+0.05])
             self.a.set_xlabel("Nombre de jours")
             self.a.set_ylabel("Population")
@@ -148,7 +151,7 @@ def open(N_pop, duree, pas_t, u0):
             if self.diffusion == 0:
                 self.fig.clf()
                 # On récupère les choix de l'utilisateur
-                parametres = [N_pop,self.beta.get(),self.gamma.get(),self.alpha.get(),self.delta.get(),self.eta.get()]
+                parametres = [N_pop,self.beta.get(),self.gamma.get(),self.alpha.get(),self.delta.get(),self.eta.get(),self.tau.get()]
                 u_0 = N_pop*np.array([1-self.I.get(),0,self.I.get(),0,0])
                 U = self.methode(u_0,modele,parametres,temps,pas_t) / N_pop
                 # On affiche uniquement les courbes utiles
@@ -166,7 +169,7 @@ def open(N_pop, duree, pas_t, u0):
                 self.a.legend()
             else:
                 # On récupère les choix de l'utilisateur
-                parametres = [N_pop,self.beta.get(),self.gamma.get(),self.alpha.get(),self.delta.get(),self.eta.get(),self.D.get()]
+                parametres = [N_pop,self.beta.get(),self.gamma.get(),self.alpha.get(),self.delta.get(),self.eta.get(),self.tau.get(),self.D.get()]
                 U = self.methode(u0,modele,parametres,temps,pas_t) / N_pop
                 # Selection des temps à afficher
                 nb_lignes = 3
@@ -198,7 +201,7 @@ def open(N_pop, duree, pas_t, u0):
     fenetre = Tk()
     fenetre.wm_iconbitmap('enpc_favicon.ico')
     fenetre.title("Modélisation de la propagation d'une épidémie")
-    fenetre.geometry("1400x800+30+30")
+    fenetre.geometry("1400x900+30+30")
 
     boutons = Boutons(fenetre, N_pop, duree, pas_t, u0)
     fenetre.mainloop()

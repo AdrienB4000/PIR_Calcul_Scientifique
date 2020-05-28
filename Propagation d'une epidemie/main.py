@@ -18,8 +18,6 @@ pas_t = duree/nb_pts_t
 
 # Parametres de modelistaion
 N_pop = 10000 # Population totale
-
-diffusion = 0 # 0 si non 1 si oui
 nb_pts_x = 9
 
 # Choix de u0 pour le cas avec diffusion
@@ -30,6 +28,5 @@ S0 = N_pop*np.ones(nb_pts_x) - I0
 u0 = np.zeros((nb_pts_x,5))
 u0[:,0] = S0
 u0[:,2] = I0
-#u0 = N_pop / (nb_pts_x-1) * np.array([[(nb_pts_x-1)-4*i*(1-i/(nb_pts_x-1)),0,4*i*(1-i/(nb_pts_x-1)),0,0] for i in range(nb_pts_x)])
 
 aff.open(N_pop, duree, pas_t, u0)

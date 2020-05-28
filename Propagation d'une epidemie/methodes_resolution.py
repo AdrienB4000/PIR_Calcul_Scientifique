@@ -37,7 +37,7 @@ def Newton(x0,h,jacobienne,pas_t,parametres):
         dh = jacobienne(x)
         if np.linalg.matrix_rank(dh)!=len(dh):
             print("Probleme : impossible de resoudre le modele avec la methode d'Euler implicite\n")
-            dh = dh + 0.1*np.identity(5)
+            #dh = dh + 0.1*np.identity(5)
             break
         else:
             dx = -np.linalg.solve(dh,h(x))

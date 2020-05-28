@@ -7,7 +7,7 @@ I : (infected) population infectee
 R : (recovered) population guerie
 T : (treated) population traitée
 
-Avec u = [S,E,I,R,T], le modèle donne l'equation : du/dt = f(u) + D*delta_U
+Avec u = [S,E,I,R,T], le modèle donne l'equation : du/dt = f(u) + D*laplacien_U
 avec f qui varie selon la complexite du modele. """
 
 def f_SIR(u,parametres,A):
@@ -48,13 +48,13 @@ def f_SIRT(u,parametres,A):
     N = parametres[0]
     beta = parametres[1]
     gamma = parametres[2]
-    alpha = parametres[3]
     delta = parametres[4]
     eta = parametres[5]
+    tau = parametres[6]
     dS_dt = -beta*(I+delta*T)*S/N
-    dI_dt = beta*(I+delta*T)*S/N - (alpha+gamma)*I
+    dI_dt = beta*(I+delta*T)*S/N - (tau+gamma)*I
     dR_dt = gamma*I + eta*T
-    dT_dt = alpha*I - eta*T
+    dT_dt = tau*I - eta*T
     return np.array([dS_dt,0,dI_dt,dR_dt,dT_dt])
 
 
@@ -68,7 +68,7 @@ def f_SIR_D(u,parametres,A):
     N = parametres[0]
     beta = parametres[1]
     gamma = parametres[2]
-    D = parametres[6]
+    D = parametres[7]
     dS_dt = -beta*I*S/N
     dI_dt = beta*I*S/N - gamma*I
     dR_dt = gamma*I
@@ -86,7 +86,7 @@ def f_SEIR_D(u,parametres,A):
     beta = parametres[1]
     gamma = parametres[2]
     alpha = parametres[3]
-    D = parametres[6]
+    D = parametres[7]
     dS_dt = -beta*I*S/N
     dE_dt = beta*I*S/N - alpha*E
     dI_dt = alpha*E - gamma*I
@@ -103,14 +103,14 @@ def f_SIRT_D(u,parametres,A):
     N = parametres[0]
     beta = parametres[1]
     gamma = parametres[2]
-    alpha = parametres[3]
     delta = parametres[4]
     eta = parametres[5]
-    D = parametres[6]
+    tau = parametres[6]
+    D = parametres[7]
     dS_dt = -beta*(I+delta*T)*S/N
-    dI_dt = beta*(I+delta*T)*S/N - (alpha+gamma)*I
+    dI_dt = beta*(I+delta*T)*S/N - (tau+gamma)*I
     dR_dt = gamma*I + eta*T
-    dT_dt = alpha*I - eta*T
+    dT_dt = tau*I - eta*T
     # La diffusion se calcule uniquement avec la matrice A, avec condition de gradient nul au bord
     return np.array([[dS_dt[i],0,dI_dt[i],dR_dt[i],dT_dt[i]] for i in range(len(I))]) + D*np.dot(A,u)
 
@@ -145,10 +145,10 @@ def d_SIRT(u,parametres):
     N = parametres[0]
     beta = parametres[1]
     gamma = parametres[2]
-    alpha = parametres[3]
     delta = parametres[4]
     eta = parametres[5]
-    return np.array([[-beta*(I+delta*T)/N,0,-beta*S/N,0,-beta*delta*S/N],[0,0,0,0,0],[beta*(I+delta*T)/N,0,beta*S/N-(alpha+gamma),0,beta*delta*S/N],[0,0,gamma,0,eta],[0,0,alpha,0,-eta]])
+    tau = parametres[6]
+    return np.array([[-beta*(I+delta*T)/N,0,-beta*S/N,0,-beta*delta*S/N],[0,0,0,0,0],[beta*(I+delta*T)/N,0,beta*S/N-(tau+gamma),0,beta*delta*S/N],[0,0,gamma,0,eta],[0,0,tau,0,-eta]])
 
 def d_SIR_D(u,parametres):
     """Calcule la jacobienne de f pour le modèle SIR avec diffusion en u."""
