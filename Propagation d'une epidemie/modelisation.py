@@ -1,14 +1,15 @@
 import numpy as np
 
-"""Modèle épidémologique SIR, SIS, MSIR, SEIR, SEIS, MSEIR, MSEIRS :
+"""Modele epidemologique SIR, SEIR, SIRT avec et sans diffusion :
 S : (susceptible) population susceptible d'etre contaminee
 E : (exposed) population exposee
 I : (infected) population infectee
 R : (recovered) population guerie
-T : (treated) population traitée
+T : (treated) population traitee
 
-Avec u = [S,E,I,R,T], le modèle donne l'equation : du/dt = f(u) + D*laplacien_U
-avec f qui varie selon la complexite du modele. """
+Avec u = [S,E,I,R,T], le modele donne l'equation : du/dt = f(u)
+avec f qui varie selon la complexite du modele, et qui inclut la
+diffusion si necessaire, c-a-d D*laplacien_u."""
 
 def f_SIR(u,parametres,A):
     """Calcule f(u) selon le modele SIR."""
@@ -124,9 +125,9 @@ def f_SIRT_D(u,parametres,A):
 modeles = [f_SIR,f_SEIR,f_SIRT,f_SIR_D,f_SEIR_D,f_SIRT_D]
 noms_modeles = ["SIR","SEIR","SIRT","SIR","SEIR","SIRT"]
 
-## Jacobienne des fonctions de chaque modèle pour la méthode d'Euler implicite
+## Jacobienne des fonctions de chaque modele pour la methode d'Euler implicite
 def d_SIR(u,parametres):
-    """Calcule la jacobienne de f pour le modèle SIR sans diffusion en u."""
+    """Calcule la jacobienne de f pour le modele SIR sans diffusion en u."""
     S = u[0]
     I = u[2]
     N = parametres[0]
@@ -136,7 +137,7 @@ def d_SIR(u,parametres):
     return np.array([[-beta*I/N,0,-beta*S/N,0,0],[0,0,0,0,0],[beta*I/N,0,beta*S/N-gamma,0,0],[0,0,gamma,0,0],[0,0,0,0,0]])
 
 def d_SEIR(u,parametres):
-    """Calcule la jacobienne de f pour le modèle SEIR sans diffusion en u."""
+    """Calcule la jacobienne de f pour le modele SEIR sans diffusion en u."""
     S = u[0]
     I = u[2]
     N = parametres[0]
@@ -147,7 +148,7 @@ def d_SEIR(u,parametres):
     return np.array([[-beta*I/N,0,-beta*S/N,0,0],[beta*I/N,-alpha,beta*S/N,0,0],[0,alpha,-gamma,0,0],[0,0,gamma,0,0],[0,0,0,0,0]])
 
 def d_SIRT(u,parametres):
-    """Calcule la jacobienne de f pour le modèle SIRT sans diffusion en u."""
+    """Calcule la jacobienne de f pour le modele SIRT sans diffusion en u."""
     S = u[0]
     I = u[2]
     T = u[4]
@@ -161,7 +162,7 @@ def d_SIRT(u,parametres):
     return np.array([[-beta*(I+delta*T)/N,0,-beta*S/N,0,-beta*delta*S/N],[0,0,0,0,0],[beta*(I+delta*T)/N,0,beta*S/N-(tau+gamma),0,beta*delta*S/N],[0,0,gamma,0,eta],[0,0,tau,0,-eta]])
 
 def d_SIR_D(u,parametres):
-    """Calcule la jacobienne de f pour le modèle SIR avec diffusion en u."""
+    """Calcule la jacobienne de f pour le modele SIR avec diffusion en u."""
     # La jacobienne est diagonale par blocs
     taille = len(u)
     jac = np.zeros((taille,taille))
@@ -170,7 +171,7 @@ def d_SIR_D(u,parametres):
     return jac
 
 def d_SEIR_D(u,parametres):
-    """Calcule la jacobienne de f pour le modèle SEIR avec diffusion en u."""
+    """Calcule la jacobienne de f pour le modele SEIR avec diffusion en u."""
     # La jacobienne est diagonale par blocs
     taille = len(u)
     jac = np.zeros((taille,taille))
@@ -179,7 +180,7 @@ def d_SEIR_D(u,parametres):
     return jac
 
 def d_SIRT_D(u,parametres):
-    """Calcule la jacobienne de f pour le modèle SIRT avec diffusion en u."""
+    """Calcule la jacobienne de f pour le modele SIRT avec diffusion en u."""
     # La jacobienne est diagonale par blocs
     taille = len(u)
     jac = np.zeros((taille,taille))

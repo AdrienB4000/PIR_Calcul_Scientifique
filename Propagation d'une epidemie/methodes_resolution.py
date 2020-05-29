@@ -2,8 +2,6 @@ import numpy as np
 import os
 import modelisation as mod
 
-
-
 def Euler_explicite(u0,f,parametres,temps,pas_t):
     """Resout du/dt=f(u) avec la methode d'Euler explicite (ou Runge-Kutta d'ordre 1)."""
     U = [u0]
@@ -22,7 +20,7 @@ def Euler_explicite(u0,f,parametres,temps,pas_t):
     A[-1,-1]=-1
     A/=pas_x**2
 
-    # Résolution
+    # Resolution
     for t in temps[:-1]:
         u = u + pas_t*f(u,parametres,A)
         U.append(u)
@@ -64,7 +62,7 @@ def Euler_implicite(u0,f,parametres,temps,pas_t):
     A[-1,-1]=-1
     A/=pas_x**2
 
-    # Résolution
+    # Resolution
     # On change la forme de u pour pouvoir utiliser Newton, qui ne s'utilise qu'avec un vecteur
     def h(x):
         return x-u-pas_t*np.reshape(f(np.reshape(x,np.shape(u0)),parametres,A),-1)
@@ -95,7 +93,7 @@ def Heun(u0,f,parametres,temps,pas_t):
     A[-1,-1]=-1
     A/=pas_x**2
 
-    # Résolution
+    # Resolution
     for t in temps[:-1]:
         u = u + pas_t/2*(f(u,parametres,A)+f(u+pas_t*f(u,parametres,A),parametres,A))
         U.append(u)
@@ -119,7 +117,7 @@ def Runge_Kutta_2(u0,f,parametres,temps,pas_t):
     A[-1,-1]=-1
     A/=pas_x**2
 
-    # Résolution
+    # Resolution
     for t in temps[:-1]:
         u = u + pas_t*f(u+pas_t/2*f(u,parametres,A),parametres,A)
         U.append(u)
@@ -143,7 +141,7 @@ def Runge_Kutta_4(u0,f,parametres,temps,pas_t):
     A[-1,-1]=-1
     A/=pas_x**2
 
-    # Résolution
+    # Resolution
     for t in temps[:-1]:
         k1 = f(u,parametres,A)
         k2 = f(u+pas_t/2*k1,parametres,A)
