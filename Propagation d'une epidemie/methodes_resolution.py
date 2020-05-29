@@ -153,6 +153,8 @@ def Runge_Kutta_4(u0,f,parametres,temps,pas_t):
         U.append(u)
     return np.array(U)
 
+
+
 methodes = [Euler_explicite,Euler_implicite,Heun,Runge_Kutta_2,Runge_Kutta_4]
 noms_methodes = ["Euler_explicite","Euler_implicite","Heun","Runge_Kutta_2","Runge_Kutta_4"]
 

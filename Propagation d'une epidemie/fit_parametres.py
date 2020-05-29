@@ -4,7 +4,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 import os
-os.chdir("C:/Users/belfe/OneDrive/Documents/Cours/Ponts_1A_2019-2020/PIR/PIR_Calcul_Scientifique-master/Propagation d'une epidemie/")
 import modelisation as mod
 import methodes_resolution as met
 

@@ -58,6 +58,7 @@ def f_SIRT(u,parametres,A):
     dI_dt = beta*(I+delta*T)*S/N - (tau+gamma)*I - demo*I
     dR_dt = gamma*I + eta*T - demo*R
     dT_dt = tau*I - eta*T - demo*T
+
     return np.array([dS_dt,0,dI_dt,dR_dt,dT_dt])
 
 

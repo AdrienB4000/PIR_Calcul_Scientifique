@@ -7,7 +7,7 @@ import affichage as aff
 ## Paramètres
 
 # Parametres d'affichage
-duree = 50 # Duree (jour)
+duree = 30 # Duree (jour)
 nb_pts_t = 10000
 pas_t = duree/nb_pts_t
 
