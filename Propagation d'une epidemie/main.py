@@ -4,7 +4,7 @@ from math import *
 import os
 import affichage as aff
 
-## Paramètres
+## Parametres
 
 # Parametres d'affichage
 duree = 50 # Duree (jour)
