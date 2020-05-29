@@ -1,19 +1,14 @@
-from tkinter import *
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from matplotlib.figure import Figure
 import numpy as np
 from math import *
 
 import os
-import methodes_resolution as res
-import modelisation as mod
 import affichage as aff
 
 ## Paramètres
 
 # Parametres d'affichage
 duree = 50 # Duree (jour)
-nb_pts_t = 1000
+nb_pts_t = 10000
 pas_t = duree/nb_pts_t
 
 # Parametres de modelistaion

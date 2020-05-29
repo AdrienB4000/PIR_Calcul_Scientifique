@@ -8,6 +8,7 @@ import methodes_resolution as res
 import modelisation as mod
 
 # Paramètres par défaut
+demo_def = 0.
 beta_def = 1.4
 gamma_def = 0.1
 alpha_def = 0.2
@@ -60,6 +61,10 @@ def open(N_pop, duree, pas_t, u0):
             self.var1 = IntVar()
             self.checkbox_diffusion = Checkbutton(F1, text="diffusion", onvalue=1, offvalue=0, variable=self.var1)
             self.checkbox_diffusion.pack(side=TOP)
+
+            self.demo=Scale(F1, orient="horizontal", from_=0, to=1, resolution=0.05, label="Taux démographique (de natalité et mortalité)", tickinterval=1., length=320)
+            self.demo.set(demo_def)
+            self.demo.pack(side=TOP)
 
             self.beta=Scale(F1, orient="horizontal", from_=0, to=4, resolution=0.1, label="Contacts par pers. infectee par jour", tickinterval=1., length=320)
             self.beta.set(beta_def)
@@ -114,7 +119,7 @@ def open(N_pop, duree, pas_t, u0):
             # Affichage
             self.fig = Figure()
 
-            U = self.methode(N_pop*u_def,modele,[N_pop,beta_def,gamma_def,alpha_def,delta_def,eta_def,tau_def],temps,pas_t) / N_pop
+            U = self.methode(N_pop*u_def,modele,[N_pop,demo_def,beta_def,gamma_def,alpha_def,delta_def,eta_def,tau_def],temps,pas_t) / N_pop
             self.a = self.fig.add_subplot(111)
             self.p1,=self.a.plot(temps, U[:,0], ':', color="blue", label="S")
             self.p3,=self.a.plot(temps, U[:,2], ':', color="red", label="I")
@@ -151,7 +156,7 @@ def open(N_pop, duree, pas_t, u0):
             if self.diffusion == 0:
                 self.fig.clf()
                 # On récupère les choix de l'utilisateur
-                parametres = [N_pop,self.beta.get(),self.gamma.get(),self.alpha.get(),self.delta.get(),self.eta.get(),self.tau.get()]
+                parametres = [N_pop,self.demo.get(),self.beta.get(),self.gamma.get(),self.alpha.get(),self.delta.get(),self.eta.get(),self.tau.get()]
                 u_0 = N_pop*np.array([1-self.I.get(),0,self.I.get(),0,0])
                 U = self.methode(u_0,modele,parametres,temps,pas_t) / N_pop
                 # On affiche uniquement les courbes utiles
@@ -169,11 +174,11 @@ def open(N_pop, duree, pas_t, u0):
                 self.a.legend()
             else:
                 # On récupère les choix de l'utilisateur
-                parametres = [N_pop,self.beta.get(),self.gamma.get(),self.alpha.get(),self.delta.get(),self.eta.get(),self.tau.get(),self.D.get()]
+                parametres = [N_pop,self.demo.get(),self.beta.get(),self.gamma.get(),self.alpha.get(),self.delta.get(),self.eta.get(),self.tau.get(),self.D.get()]
                 U = self.methode(u0,modele,parametres,temps,pas_t) / N_pop
                 # Selection des temps à afficher
-                nb_lignes = 3
-                nb_colonnes = 3
+                nb_lignes = 2
+                nb_colonnes = 2
                 temps_a_afficher = np.array([0,int(len(U)/50),int(len(U)/38),int(len(U)/20),int(len(U)/12),int(len(U)/8),int(len(U)/5),int(len(U)/4),int(len(U)/2)])
                 self.fig.clf()
                 nb_pts_x = len(u0)
@@ -201,7 +206,7 @@ def open(N_pop, duree, pas_t, u0):
     fenetre = Tk()
     fenetre.wm_iconbitmap('enpc_favicon.ico')
     fenetre.title("Modélisation de la propagation d'une épidémie")
-    fenetre.geometry("1400x900+30+30")
+    fenetre.geometry("1400x950+30+30")
 
     boutons = Boutons(fenetre, N_pop, duree, pas_t, u0)
     fenetre.mainloop()
