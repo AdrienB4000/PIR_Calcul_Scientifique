@@ -204,7 +204,7 @@ def open(N_pop, duree, pas_t, u0):
                 # On recupere les choix de l'utilisateur
                 parametres = [N_pop,self.demo.get(),self.beta.get(),self.gamma.get(),self.alpha.get(),self.delta.get(),self.eta.get(),self.tau.get(),self.D.get()]
                 U = self.methode(u0,modele,parametres,temps,pas_t) / N_pop
-                # Selection des temps à afficher
+                # Selection des temps a afficher
                 nb_lignes = 3
                 nb_colonnes = 3
                 temps_a_afficher = np.array([0,int(len(U)/50),int(len(U)/38),int(len(U)/20),int(len(U)/12),int(len(U)/8),int(len(U)/5),int(len(U)/4),int(len(U)/2)])
