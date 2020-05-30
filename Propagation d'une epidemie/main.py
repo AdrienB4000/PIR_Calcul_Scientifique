@@ -6,6 +6,7 @@ from math import *
 
 import os
 import affichage as aff
+import fit_parametres as fit
 
 ## Parametres
 
@@ -26,5 +27,7 @@ S0 = N_pop*np.ones(nb_pts_x) - I0
 u0 = np.zeros((nb_pts_x,5))
 u0[:,0] = S0
 u0[:,2] = I0
+
+fit.dessine_probables(fit.data[:11])
 
 aff.open(N_pop, duree, pas_t, u0)
