@@ -1,3 +1,6 @@
+
+## Script principal
+
 import numpy as np
 from math import *
 
@@ -7,7 +10,7 @@ import affichage as aff
 ## Parametres
 
 # Parametres d'affichage
-duree = 30 # Duree (jour)
+duree = 50 # Duree (jour)
 nb_pts_t = 10000
 pas_t = duree/nb_pts_t
 

@@ -1,3 +1,6 @@
+
+## Implementation des methodes de resolution
+
 import numpy as np
 import os
 import modelisation as mod
@@ -150,8 +153,6 @@ def Runge_Kutta_4(u0,f,parametres,temps,pas_t):
         u = u + pas_t/6*(k1+2*k2+2*k3+k4)
         U.append(u)
     return np.array(U)
-
-
 
 methodes = [Euler_explicite,Euler_implicite,Heun,Runge_Kutta_2,Runge_Kutta_4]
 noms_methodes = ["Euler_explicite","Euler_implicite","Heun","Runge_Kutta_2","Runge_Kutta_4"]

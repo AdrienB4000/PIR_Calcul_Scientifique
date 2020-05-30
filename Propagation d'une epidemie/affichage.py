@@ -1,3 +1,6 @@
+
+## Implementation de l'interface graphique
+
 from tkinter import *
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
@@ -23,7 +26,7 @@ I_def = 0.1
 R_def = 0.
 T_def = 0.
 u_def = np.array([S_def,E_def,I_def,R_def,T_def])
-
+from math import *
 def open(N_pop, duree, pas_t, u0):
     class Boutons:
         def __init__(self, master, N_pop, duree, pas_t, u0):
@@ -169,37 +172,6 @@ def open(N_pop, duree, pas_t, u0):
                 self.a.set_xlabel("Nombre de jours")
                 self.a.set_ylabel("Population")
                 self.a.legend()
-                beta = self.beta.get()
-                gamma = self.gamma.get()
-                tau = self.tau.get()
-                delta = self.delta.get()
-                eta = self.eta.get()
-                R0 = beta/(tau + gamma) + (tau*delta*beta)/(tau*eta+eta*gamma)
-                S0 = U[:,0][0]
-                S_final = U[:,0][-1]
-                if self.liste.curselection()[0]==2: #Si on est sur le SIRT
-	                print(" ---------- ")
-	                print("beta = ", str(beta))
-	                print("gamma = " + str(gamma))
-	                print("tau = " + str(tau))
-	                print("delta = " + str(delta))
-	                print("eta = " + str(eta))
-	                print("R0 = ", str(R0))
-	                print("S_final = ", str(S_final))
-	                print("S0 = ", str(S0))
-	                #Verification de la valeure finale de S
-	                N = 10000
-	                def f(x):
-	                	return np.ones(1)*(S0*np.exp(-R0*(N-x)/N)-x)
-	                def fprime(x):
-	                	return np.identity(1)*(S0*R0/N*np.exp(-R0*(N-x)/N)-1)
-
-	                def resoud_Sinf_SEIR():
-	                	x0 = 1
-	                	return res.Newton(x0,f,fprime,1e-5,None)[0]
-	                S_theorique = resoud_Sinf_SEIR()
-	                print("S_theorique = ", S_theorique)
-	                print("Erreur relative: ", abs(S_final-S_theorique)/S_final)
             else:
                 # On recupere les choix de l'utilisateur
                 parametres = [N_pop,self.demo.get(),self.beta.get(),self.gamma.get(),self.alpha.get(),self.delta.get(),self.eta.get(),self.tau.get(),self.D.get()]
@@ -208,14 +180,13 @@ def open(N_pop, duree, pas_t, u0):
                 nb_lignes = 3
                 nb_colonnes = 3
                 temps_a_afficher = np.array([0,int(len(U)/50),int(len(U)/38),int(len(U)/20),int(len(U)/12),int(len(U)/8),int(len(U)/5),int(len(U)/4),int(len(U)/2)])
-                temps_a_afficher = np.linspace(0,len(U)-1,9)
                 self.fig.clf()
                 nb_pts_x = len(u0)
                 distance = np.array(range(nb_pts_x))/(nb_pts_x-1)
                 for i in range(len(temps_a_afficher)):
                     t = int(temps_a_afficher[i])
                     # On affiche uniquement les courbes utiles
-                    self.a = self.fig.add_subplot(nb_lignes,nb_colonnes,i+1)
+                    self.a = self.fig.add_subplot(nb_lignes,nb_colonnes,i+1,)
                     self.fig.tight_layout()
                     self.a.axis([0-0.05,1+0.05,0-0.05,1+0.05])
                     self.a.set_xlabel("Distance")
