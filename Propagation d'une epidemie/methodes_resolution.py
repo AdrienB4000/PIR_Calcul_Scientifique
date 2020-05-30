@@ -26,7 +26,7 @@ def Euler_explicite(u0,f,parametres,temps,pas_t):
         U.append(u)
     return np.array(U)
 
-def Newton(x0,h,jacobienne,pas_t,parametres):
+def Newton(x0,h,jacobienne):
     """Resout l'equation h(x)=0 en partant de x0 avec la methode de Newton."""
     x = x0
     epsilon = 1e-4
@@ -71,7 +71,7 @@ def Euler_implicite(u0,f,parametres,temps,pas_t):
         return np.identity(len(x)) - pas_t*mod.jacobiennes[mod.modeles.index(f)](x,parametres)
     u = np.reshape(u,-1)
     for t in temps[:-1]:
-        u = Newton(u,h,jac_h,pas_t,parametres)
+        u = Newton(u,h,jac_h)
         U.append(np.reshape(u,np.shape(u0)))
     return np.array(U)
 
